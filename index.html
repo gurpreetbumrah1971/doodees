@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
+  <title>Doodee's — Opening Soon</title>
+  <style>
+    :root { color-scheme: dark; }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    canvas {
+      display: block;
+      width: min(72vw, 430px);
+      height: auto;
+      max-height: 64svh;
+      object-fit: contain;
+    }
+
+    h1 {
+      margin: 1.5rem 0 0;
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      font-weight: 500;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <main aria-label="Doodee's opening soon">
+    <canvas id="logo" aria-label="Doodee's logo"></canvas>
+    <h1>Opening Soon</h1>
+  </main>
+
+  <script>
+    const image = new Image();
+    const canvas = document.getElementById('logo');
+    const context = canvas.getContext('2d');
+
+    image.onload = () => {
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      context.drawImage(image, 0, 0);
+
+      // The supplied logo has a white rectangular backdrop. Remove only the
+      // near-white pixels connected to its outer edge, retaining white artwork.
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+      const { data, width, height } = pixels;
+      const seen = new Uint8Array(width * height);
+      const queue = [];
+      const isBackdrop = (index) =>
+        data[index] > 245 && data[index + 1] > 245 && data[index + 2] > 245;
+      const add = (x, y) => {
+        const point = y * width + x;
+        const index = point * 4;
+        if (!seen[point] && isBackdrop(index)) {
+          seen[point] = 1;
+          queue.push(point);
+        }
+      };
+
+      for (let x = 0; x < width; x++) {
+        add(x, 0);
+        add(x, height - 1);
+      }
+      for (let y = 1; y < height - 1; y++) {
+        add(0, y);
+        add(width - 1, y);
+      }
+
+      for (let head = 0; head < queue.length; head++) {
+        const point = queue[head];
+        const x = point % width;
+        const y = Math.floor(point / width);
+        data[point * 4 + 3] = 0;
+        if (x > 0) add(x - 1, y);
+        if (x < width - 1) add(x + 1, y);
+        if (y > 0) add(x, y - 1);
+        if (y < height - 1) add(x, y + 1);
+      }
+      context.putImageData(pixels, 0, 0);
+    };
+
+    image.src = 'doodees-logo.png';
+  </script>
+</body>
+</html>
