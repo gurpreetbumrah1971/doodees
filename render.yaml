@@ -1,0 +1,5 @@
+services:
+  - type: web
+    runtime: static
+    name: doodees
+    staticPublishPath: .
