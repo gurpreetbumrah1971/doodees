@@ -248,7 +248,7 @@ CREATE TABLE `orderitem` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-06 18:53:46
+-- Dump completed on 2026-09-06 21:17:32
 
 -- Reference data: admin account, categories, menu items
 
@@ -350,4 +350,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-06 18:53:46
+-- Dump completed on 2026-09-06 21:17:32
