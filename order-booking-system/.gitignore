@@ -1,0 +1,10 @@
+# Hostinger/XAMPP runtime files and deployment credentials
+.env
+.env.*
+uploads/
+config.local.php
+.tmp-admin-build/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db

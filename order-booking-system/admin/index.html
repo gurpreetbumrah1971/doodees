@@ -1,0 +1,93 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>Doodee's | Eat More. Save More | Delicious Food &amp; Great Offers.</title>
+    <meta name="description" content="Order delicious homemade Indian food from Doodee's. Eat more, save more with great offers on fresh meals, snacks, and beverages." />
+    <meta name="keywords" content="Doodee's, Indian food, homemade food, food offers, online food ordering, restaurant menu" />
+    <meta name="author" content="Doodee's" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#000000" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Doodee's" />
+    <meta property="og:title" content="Doodee's | Eat More. Save More | Delicious Food &amp; Great Offers." />
+    <meta property="og:description" content="Order delicious homemade Indian food and discover great offers at Doodee's." />
+    <meta property="og:image" content="../assets/food/photo-updates/chicken-biryani.png" />
+    <meta property="og:image:alt" content="A delicious meal from Doodee's" />
+    <meta property="og:locale" content="en_IN" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Doodee's | Eat More. Save More | Delicious Food &amp; Great Offers." />
+    <meta name="twitter:description" content="Order delicious homemade Indian food and discover great offers at Doodee's." />
+    <meta name="twitter:image" content="../assets/food/photo-updates/chicken-biryani.png" />
+    <meta name="twitter:image:alt" content="A delicious meal from Doodee's" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      var pathSegments = window.location.pathname.split('/');
+      var adminSegmentIndex = pathSegments.findIndex(function (segment) {
+        return segment.toLowerCase() === 'admin';
+      });
+      window.__ORDER_APP_BASE__ = adminSegmentIndex >= 0
+        ? pathSegments.slice(0, adminSegmentIndex).join('/') + '/'
+        : new URL('./', window.location.href).pathname;
+      // The prebuilt admin bundle contains a few legacy root-relative links.
+      // Keep them inside this deployment when it is hosted in a subfolder,
+      // including nested routes such as /admin/lms.
+      function localLegacyPath(link) {
+        var href = link.getAttribute('href') || link.href || '';
+        try {
+          var parsed = new URL(href, window.location.href);
+          return parsed.origin === window.location.origin ? parsed.pathname : '';
+        } catch (_) {
+          return '';
+        }
+      }
+      function destinationForLegacyLink(link) {
+        var pathname = localLegacyPath(link);
+        if (pathname === '/menu.html' || pathname === '/checkout.html') {
+          return window.__ORDER_APP_BASE__ + pathname.slice(1);
+        }
+        return '';
+      }
+      function rewriteLegacyLinks() {
+        document.querySelectorAll('a[href]').forEach(function (link) {
+          var destination = destinationForLegacyLink(link);
+          if (destination) link.setAttribute('href', destination);
+        });
+      }
+      document.addEventListener('click', function (event) {
+        var link = event.target.closest && event.target.closest('a[href]');
+        var destination = link && destinationForLegacyLink(link);
+        if (destination) {
+          event.preventDefault();
+          window.location.assign(destination);
+        }
+      }, true);
+      new MutationObserver(rewriteLegacyLinks).observe(document.documentElement, { childList: true, subtree: true });
+      document.addEventListener('DOMContentLoaded', rewriteLegacyLinks);
+    </script>
+    <script defer src="address-display.js?v=address-live-1"></script>
+    <script type="module" crossorigin src="../assets/index-BD6I80Cl.js"></script>
+    <link rel="stylesheet" crossorigin href="../assets/index-k2oe8nTM.css">
+    <style>
+      /* index-k2oe8nTM.css is shared with the customer site, which sets these
+         :root variables for Doodee's dark branding (--white is even redefined
+         to a near-black #141414). The admin dashboard was built assuming the
+         original light values, so restore them here, scoped to admin only. */
+      :root {
+        --bg-color: #f5f5f5;
+        --text-color: #333;
+        --white: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

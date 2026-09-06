@@ -1,0 +1,108 @@
+<?php
+/* Copy this folder to public_html. Set these four values from hPanel > MySQL
+ * Databases. Prefer keeping this file one directory above public_html when
+ * possible, then update api/index.php to require that external path. */
+/* Local XAMPP convenience: when this copy still has placeholder values, use
+ * the reference application's local MySQL connection. Hostinger never has
+ * that path, so production continues to use the values below. */
+$localReferenceEnv = 'C:/XAMPP/htdocs/order booking system/server/.env';
+$privateConfig = [];
+// On shared hosting, keep secrets one directory above public_html. This file
+// is deliberately ignored by Git, so deployments never overwrite or expose it.
+$privateConfigPath = dirname(__DIR__) . '/config.local.php';
+if (is_file($privateConfigPath)) {
+  $loadedConfig = require $privateConfigPath;
+  if (is_array($loadedConfig)) $privateConfig = $loadedConfig;
+}
+$localDatabaseUrl = null;
+if (is_file($localReferenceEnv)) {
+  // The reference .env has values which are not valid PHP INI syntax, so
+  // extract only DATABASE_URL rather than parsing the complete file.
+  $localEnvText = file_get_contents($localReferenceEnv);
+  if (preg_match('/^DATABASE_URL\s*=\s*["\']?([^\r\n"\']+)/m', $localEnvText, $match)) {
+    $localDatabaseUrl = trim($match[1]);
+  }
+}
+$localDatabase = $localDatabaseUrl ? parse_url($localDatabaseUrl) : null;
+// DB credentials and APP_SECRET are never hardcoded here - this file is
+// public (committed to a public Git repo). Real values live in
+// config.local.php (gitignored) or host environment variables; see
+// config.local.example.php. XAMPP falls back to the reference app's local
+// MySQL connection purely for local development convenience.
+define('DB_HOST', configValue('DB_HOST') ?: ($localDatabase['host'] ?? 'localhost'));
+define('DB_NAME', configValue('DB_NAME') ?: ($localDatabase ? 'spice_restaurant' : ''));
+define('DB_USER', configValue('DB_USER') ?: (isset($localDatabase['user']) ? rawurldecode($localDatabase['user']) : ''));
+define('DB_PASS', configValue('DB_PASS') ?: (isset($localDatabase['pass']) ? rawurldecode($localDatabase['pass']) : ''));
+define('APP_SECRET', configValue('APP_SECRET') ?: ($localDatabase ? 'local-dev-only-secret-do-not-use-in-production' : ''));
+if (DB_NAME === '' || DB_USER === '' || APP_SECRET === '') {
+  http_response_code(500);
+  die('Server is not configured: set DB_HOST, DB_NAME, DB_USER, DB_PASS and APP_SECRET in config.local.php (see config.local.example.php) or as environment variables.');
+}
+const ADMIN_DEFAULT_USER = 'admin';
+const ADMIN_DEFAULT_PASSWORD = 'admin123';
+
+// MSG91 widget credentials. `MSG91_TOKEN_AUTH` is the widget token generated
+// in MSG91's OTP Widget screen and is used by both the browser and PHP to
+// verify the widget's reqId OTP session. `MSG91_AUTHKEY` is retained only for
+// other MSG91 services and is not used by this OTP Widget flow.
+// On shared hosting without environment variables, paste the three values
+// below. Keep this file outside public_html when the host permits it.
+$msg91WidgetId = '';
+$msg91TokenAuth = '';
+$msg91Authkey = '';
+function localEnvValue(string $key): string {
+  global $localEnvText;
+  if (!isset($localEnvText) || !preg_match('/^' . preg_quote($key, '/') . '\s*=\s*["\']?([^\r\n"\']+)/m', $localEnvText, $match)) return '';
+  return trim($match[1]);
+}
+function configValue(string ...$keys): string {
+  global $privateConfig;
+  foreach ($keys as $key) {
+    $value = getenv($key);
+    if ($value !== false && trim((string)$value) !== '') return trim((string)$value);
+    $value = $privateConfig[$key] ?? '';
+    if (is_string($value) && trim($value) !== '') return trim($value);
+    $value = localEnvValue($key);
+    if ($value !== '') return $value;
+  }
+  return '';
+}
+define('OTP_PROVIDER', strtolower(configValue('OTP_PROVIDER') ?: 'msg91'));
+define('MSG91_WIDGET_ID', configValue('MSG91_WIDGET_ID') ?: $msg91WidgetId);
+define('MSG91_TOKEN_AUTH', configValue('MSG91_TOKEN_AUTH', 'MSG91_WIDGET_TOKEN', 'MSG91_WIDGET_AUTH_TOKEN') ?: $msg91TokenAuth);
+define('MSG91_AUTHKEY', configValue('MSG91_AUTHKEY', 'MSG91_AUTH_KEY') ?: $msg91Authkey);
+
+// MSG91 WhatsApp order-confirmation template. Reuses MSG91_AUTHKEY above.
+// Override any of these via config.local.php if the template changes.
+define('MSG91_WHATSAPP_INTEGRATED_NUMBER', configValue('MSG91_WHATSAPP_INTEGRATED_NUMBER', 'MSG91_WHATSAPP_SENDER_NUMBER') ?: '919653102273');
+define('MSG91_WHATSAPP_TEMPLATE_NAME', configValue('MSG91_WHATSAPP_TEMPLATE_NAME', 'MSG91_WHATSAPP_ORDER_TEMPLATE') ?: 'order_confirmation');
+define('MSG91_WHATSAPP_NAMESPACE', configValue('MSG91_WHATSAPP_NAMESPACE', 'MSG91_WHATSAPP_TEMPLATE_NAMESPACE') ?: '6a394fca_e0ed_41b8_9923_4eb65bb6e6d0');
+// Staff-facing "new order placed" WhatsApp alert (separate template, no body
+// variables). Recipients default to the restaurant's numbers below; override
+// via ORDER_NOTIFICATION_WHATSAPP_RECIPIENTS (comma-separated) if they change.
+define('MSG91_WHATSAPP_NOTIFICATION_TEMPLATE', configValue('MSG91_WHATSAPP_NOTIFICATION_TEMPLATE') ?: 'order_notification');
+define('ORDER_NOTIFICATION_WHATSAPP_RECIPIENTS', configValue('ORDER_NOTIFICATION_WHATSAPP_RECIPIENTS'));
+
+// Resend order-notification email. Set these via config.local.php (see
+// config.local.example.php) or environment variables on Hostinger.
+define('RESEND_API_KEY', configValue('RESEND_API_KEY'));
+define('RESEND_FROM_EMAIL', configValue('RESEND_FROM_EMAIL'));
+define('ORDER_NOTIFICATION_RECIPIENTS', configValue('ORDER_NOTIFICATION_RECIPIENTS'));
+// XAMPP's bundled CA list is outdated on this computer. Disable verification
+// only for this local reference-assisted setup; Hostinger keeps it enabled.
+define('MSG91_SSL_VERIFY', !is_file($localReferenceEnv));
+
+date_default_timezone_set('Asia/Kolkata');
+
+function db(): PDO {
+  static $pdo = null;
+  if ($pdo === null) {
+    $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8mb4', DB_USER, DB_PASS,
+      [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
+    // Force IST regardless of the host's MySQL server timezone, so
+    // createdAt/NOW()/CURRENT_TIMESTAMP values match what the frontend
+    // (assets/app.js) assumes when it renders timestamps as IST.
+    $pdo->exec("SET time_zone='+05:30'");
+  }
+  return $pdo;
+}

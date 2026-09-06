@@ -1,0 +1,8 @@
+# Raw/working material not part of the deployed site
+food photos/
+assets/
+
+# AI tooling config, not site code
+.agents/
+.claude/
+skills-lock.json
