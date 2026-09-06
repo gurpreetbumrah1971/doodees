@@ -1,8 +1,16 @@
-# Raw/working material not part of the deployed site (root-only - leading
-# slash so this doesn't also match order-booking-system/assets/, which is
-# the real site's CSS/JS/images and must be tracked).
+# Hostinger/XAMPP runtime files and deployment credentials
+.env
+.env.*
+uploads/
+config.local.php
+.tmp-admin-build/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+
+# Raw/working material not part of the deployed site
 /food photos/
-/assets/
 
 # AI tooling config, not site code
 /.agents/

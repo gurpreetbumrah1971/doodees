@@ -27,13 +27,15 @@ $localDatabase = $localDatabaseUrl ? parse_url($localDatabaseUrl) : null;
 // DB credentials and APP_SECRET are never hardcoded here - this file is
 // public (committed to a public Git repo). Real values live in
 // config.local.php (gitignored) or host environment variables; see
-// config.local.example.php. XAMPP falls back to the reference app's local
-// MySQL connection purely for local development convenience.
-define('DB_HOST', configValue('DB_HOST') ?: ($localDatabase['host'] ?? 'localhost'));
-define('DB_NAME', configValue('DB_NAME') ?: ($localDatabase ? 'spice_restaurant' : ''));
-define('DB_USER', configValue('DB_USER') ?: (isset($localDatabase['user']) ? rawurldecode($localDatabase['user']) : ''));
-define('DB_PASS', configValue('DB_PASS') ?: (isset($localDatabase['pass']) ? rawurldecode($localDatabase['pass']) : ''));
-define('APP_SECRET', configValue('APP_SECRET') ?: ($localDatabase ? 'local-dev-only-secret-do-not-use-in-production' : ''));
+// config.local.example.php. When the local XAMPP reference app is present,
+// its local MySQL connection takes priority for local development
+// convenience, even if config.local.php also happens to be present (e.g. a
+// copy of the real production credentials used for one-off testing).
+define('DB_HOST', $localDatabase['host'] ?? (configValue('DB_HOST') ?: 'localhost'));
+define('DB_NAME', $localDatabase ? 'spice_restaurant' : configValue('DB_NAME'));
+define('DB_USER', isset($localDatabase['user']) ? rawurldecode($localDatabase['user']) : configValue('DB_USER'));
+define('DB_PASS', isset($localDatabase['pass']) ? rawurldecode($localDatabase['pass']) : configValue('DB_PASS'));
+define('APP_SECRET', $localDatabase ? 'local-dev-only-secret-do-not-use-in-production' : configValue('APP_SECRET'));
 if (DB_NAME === '' || DB_USER === '' || APP_SECRET === '') {
   http_response_code(500);
   die('Server is not configured: set DB_HOST, DB_NAME, DB_USER, DB_PASS and APP_SECRET in config.local.php (see config.local.example.php) or as environment variables.');

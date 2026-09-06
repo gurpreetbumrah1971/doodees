@@ -4,14 +4,8 @@ This is a PHP + MySQL build. It does not need Node.js, `package.json`, Prisma, P
 
 ## Release repository sync
 
-Every release must be pushed to both configured Git remotes before checking the
-online deployment:
-
-- `origin` — `manishas-kitchen-hostinger`
-- `deployment` — `manishas-kitchen-hostinger-clone` (the repository used by the online build)
-
-Push the same `main` commit to both remotes. A change that is only on `origin`
-will work locally but will not appear on the deployed website.
+This site deploys from a single remote: `origin` — `gurpreetbumrah1971/doodees`.
+Push `main` and the change is live once Hostinger's Git deployment pulls it.
 
 ## Choose the PHP/HTML Git deployment option
 
@@ -46,5 +40,5 @@ When an admin confirms an order, a WhatsApp message using the approved `order_co
 - Apache rewrites retain `/menu`, `/checkout`, and `/admin/...` URLs.
 - The `/api` implementation uses PHP PDO with MySQL and has no Node runtime dependency.
 - Orders, menu availability, admin sign-in, customer sessions, wallet addresses, and order-status polling are implemented locally.
-- `database.sql` includes all 10 current menu categories and 69 menu items. The referenced food images are included in the repository under `assets/food/`.
+- `database.sql` includes the current 7 menu categories and 39 menu items. The referenced food images are included in the repository under `assets/food/`.
 - `package.json` is intentionally absent: it is not part of a PHP deployment and adding one would not make the PHP backend work in a static/Node deployment.
