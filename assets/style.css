@@ -999,8 +999,8 @@ textarea {
     padding: 0.55rem 0.5rem;
     border: 0;
     border-radius: 6px;
-    background: transparent;
-    color: var(--muted);
+    background: #000;
+    color: var(--accent);
     font: inherit;
     font-size: 0.9rem;
     font-weight: 600;
@@ -1008,7 +1008,7 @@ textarea {
 }
 
 .wallet-mode-toggle button.active {
-    background: var(--green);
+    background: var(--accent);
     color: #000;
 }
 
