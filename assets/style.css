@@ -879,6 +879,10 @@ textarea {
     width: 1.05rem;
 }
 
+.student-discount-field .student-discount-toggle span {
+    color: var(--accent);
+}
+
 .student-discount-field .student-discount-toggle em {
     color: var(--accent);
     font-size: 0.85rem;
@@ -898,7 +902,8 @@ textarea {
     padding: 0.55rem 0.7rem;
     border: 1px solid rgba(52, 199, 89, 0.35);
     border-radius: 6px;
-    background: var(--surface);
+    background: #fff;
+    color: #333;
     font: inherit;
 }
 
@@ -3266,12 +3271,6 @@ th {
 .checkout-page .form-card select[data-payment-method] {
     background: #fff;
     color: #000;
-}
-
-.checkout-page .form-card input[data-student-institution],
-.checkout-page .form-card input[data-student-grade] {
-    background: #fff;
-    color: #333;
 }
 
 .checkout-page .form-card .btn.primary {
