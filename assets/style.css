@@ -843,9 +843,9 @@ textarea {
 .student-discount-field {
     margin-top: 0.8rem;
     padding: 0.7rem;
-    border: 1px solid rgba(52, 199, 89, 0.3);
+    border: 1px solid var(--line);
     border-radius: 8px;
-    background: rgba(52, 199, 89, 0.08);
+    background: var(--surface);
 }
 
 .student-discount-field label {
