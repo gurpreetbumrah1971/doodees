@@ -3253,8 +3253,8 @@ th {
 .checkout-page .form-card textarea,
 .checkout-page .form-card select {
     border-color: var(--line);
-    background: var(--soft);
-    color: var(--text);
+    background: #fff;
+    color: #000;
 }
 
 .checkout-page .form-card select[data-payment-method] {
