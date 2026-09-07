@@ -1072,6 +1072,19 @@ select:focus {
     gap: 0.75rem;
 }
 
+.cashback-login-form input[name="otp"] {
+    background: var(--surface);
+    color: #fff;
+}
+
+.cashback-login-form input[name="otp"]:-webkit-autofill,
+.cashback-login-form input[name="otp"]:-webkit-autofill:hover,
+.cashback-login-form input[name="otp"]:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff;
+    -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
 .checkout-page .cashback-login-form input[data-wallet-number],
 .checkout-page .cashback-login-form input[name="customer_name"] {
     background: #000;
