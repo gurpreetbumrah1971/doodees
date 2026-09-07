@@ -1887,7 +1887,10 @@ document.addEventListener('click', (event) => {
     if (savedAddress && addressInput) {
       addressInput.value = savedAddress.address;
       const presetLabels = ['Home', 'Office', 'Shop'];
-      if (labelSelect) labelSelect.value = presetLabels.includes(savedAddress.label) ? savedAddress.label : 'Custom';
+      if (labelSelect) {
+        labelSelect.value = presetLabels.includes(savedAddress.label) ? savedAddress.label : 'Custom';
+        labelSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
       if (customLabel) customLabel.hidden = presetLabels.includes(savedAddress.label);
       if (customLabelInput) customLabelInput.value = presetLabels.includes(savedAddress.label) ? '' : savedAddress.label;
     }
@@ -3115,6 +3118,7 @@ function initDeliveryFields() {
     // Clear sector when locality changes
     if (locality !== 'koparkhairne' && sectorSelect) {
       sectorSelect.value = '';
+      sectorSelect.dispatchEvent(new Event('change', { bubbles: true }));
     }
     // Clear custom location when locality changes
     if (locality !== 'other') {
@@ -3136,9 +3140,83 @@ function initDeliveryFields() {
   localitySelect.addEventListener('change', updateVisibility);
 }
 
+function enhanceSelect(select) {
+  if (!select || select.dataset.enhanced) return;
+  select.dataset.enhanced = '1';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'custom-select';
+  select.parentNode.insertBefore(wrapper, select);
+  wrapper.appendChild(select);
+  select.classList.add('custom-select-native');
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'custom-select-trigger';
+  if (select.id) {
+    trigger.id = select.id;
+    select.removeAttribute('id');
+  }
+  wrapper.appendChild(trigger);
+
+  const list = document.createElement('ul');
+  list.className = 'custom-select-list';
+  list.hidden = true;
+  wrapper.appendChild(list);
+
+  function syncTrigger() {
+    const selectedOption = select.options[select.selectedIndex];
+    trigger.textContent = selectedOption ? selectedOption.textContent : '';
+  }
+
+  function closeList() {
+    list.hidden = true;
+    wrapper.classList.remove('is-open');
+  }
+
+  function renderList() {
+    list.innerHTML = '';
+    Array.from(select.options).forEach((opt) => {
+      const li = document.createElement('li');
+      li.className = 'custom-select-option';
+      li.textContent = opt.textContent;
+      if (opt.value === select.value) li.classList.add('is-selected');
+      li.addEventListener('click', () => {
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        syncTrigger();
+        closeList();
+      });
+      list.appendChild(li);
+    });
+  }
+
+  trigger.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (list.hidden) {
+      renderList();
+      list.hidden = false;
+      wrapper.classList.add('is-open');
+    } else {
+      closeList();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!wrapper.contains(event.target)) closeList();
+  });
+
+  select.addEventListener('change', syncTrigger);
+  syncTrigger();
+}
+
 // Initialize delivery fields
 initDeliveryFields();
 syncStudentDiscountFields();
+
+['[data-locality]', '[data-sector]', '[data-address-label]', '[data-payment-method]'].forEach((selector) => {
+  enhanceSelect(document.querySelector(selector));
+});
 
 initAboutParallax();
 initHeaderShrinkOnScroll();

@@ -467,11 +467,74 @@ select:focus {
     outline-color: var(--primary);
 }
 
-.checkout-page select option:checked,
-.checkout-page select option:hover,
-.checkout-page select option:focus,
-.checkout-page select option:active {
-    background: var(--primary) linear-gradient(0deg, var(--primary) 0%, var(--primary) 100%);
+.custom-select {
+    position: relative;
+}
+
+.custom-select-native {
+    display: none;
+}
+
+.custom-select-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fff;
+    color: #000;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.custom-select-trigger::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    margin-top: -4px;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.custom-select.is-open .custom-select-trigger {
+    border-color: var(--primary);
+}
+
+.custom-select-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 40;
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.custom-select-option {
+    padding: 0.55rem 0.7rem;
+    border-radius: 6px;
+    color: #000;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.custom-select-option:hover,
+.custom-select-option.is-selected {
+    background: var(--primary);
     color: #fff;
 }
 
@@ -3259,6 +3322,7 @@ th {
 
 .checkout-page .form-card {
     gap: 0.85rem;
+    overflow: visible;
 }
 
 .checkout-page .form-card input,
