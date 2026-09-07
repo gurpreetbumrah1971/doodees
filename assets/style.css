@@ -894,8 +894,8 @@ textarea {
     padding: 0.55rem 0.7rem;
     border: 1px solid rgba(52, 199, 89, 0.35);
     border-radius: 6px;
-    background: #fff;
-    color: #333;
+    background: #000;
+    color: #fff;
     font: inherit;
 }
 
@@ -983,10 +983,10 @@ textarea {
     gap: 0.75rem;
 }
 
-.cashback-login-form input[data-wallet-number],
-.cashback-login-form input[name="customer_name"] {
-    background: #fff;
-    color: #333;
+.checkout-page .cashback-login-form input[data-wallet-number],
+.checkout-page .cashback-login-form input[name="customer_name"] {
+    background: #000;
+    color: #fff;
 }
 
 .wallet-mode-toggle {
@@ -1033,10 +1033,10 @@ textarea {
     padding: 0.65rem 0.75rem;
     border: 1px solid var(--line);
     border-radius: 8px;
-    background: #fff;
+    background: #000;
     font-size: 1rem;
     font-family: inherit;
-    color: #333;
+    color: #fff;
     resize: vertical;
 }
 
@@ -3236,8 +3236,8 @@ th {
 
 .checkout-page .referral-input-row input {
     border-color: var(--line);
-    background: #fff;
-    color: #333;
+    background: #000;
+    color: #fff;
 }
 
 .checkout-page .checkout-summary a.btn.secondary {
@@ -3250,7 +3250,12 @@ th {
 }
 
 .checkout-page .form-card input,
-.checkout-page .form-card textarea,
+.checkout-page .form-card textarea {
+    border-color: var(--line);
+    background: #000;
+    color: #fff;
+}
+
 .checkout-page .form-card select {
     border-color: var(--line);
     background: #fff;
