@@ -529,6 +529,7 @@ select:focus {
     border-radius: 6px;
     color: #000;
     font-size: 0.95rem;
+    text-align: left;
     cursor: pointer;
 }
 
