@@ -817,30 +817,22 @@ textarea {
 
 .discount-offer {
     margin: 0.75rem 0 1rem;
-    font-weight: 700;
-    line-height: 1.45;
-    text-align: center;
-}
-
-.discount-offer ul {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.5rem;
-    margin: 0.5rem 0 0;
-    padding: 0;
-    list-style: none;
-}
-
-.discount-offer li {
-    display: grid;
-    place-items: center;
-    min-height: 74px;
-    padding: 0.7rem;
+    overflow: hidden;
     border-radius: 8px;
-    background: #141414;
-    color: #fff;
+    background: var(--accent);
+}
+
+.discount-offer-track {
+    display: inline-flex;
+    min-width: max-content;
+    padding: 0.7rem 0;
+    padding-left: 100%;
+    animation: promo-ticker 18s linear infinite;
+    color: #000;
+    font-weight: 700;
     font-size: 0.88rem;
     line-height: 1.35;
+    white-space: nowrap;
 }
 
 .referral-field {
@@ -3227,21 +3219,12 @@ th {
 
 .checkout-page .discount-offer {
     margin: 0.6rem 0 0.85rem;
-    padding: 0.55rem;
     border-radius: 8px;
-    background: var(--surface);
 }
 
-.checkout-page .discount-offer ul {
-    gap: 0.35rem;
-    margin-top: 0.3rem;
-}
-
-.checkout-page .discount-offer li {
-    min-height: 44px;
-    padding: 0.4rem 0.5rem;
+.checkout-page .discount-offer-track {
+    padding: 0.55rem 0;
     font-size: 0.8rem;
-    line-height: 1.3;
 }
 
 .checkout-page .referral-field {
@@ -3508,21 +3491,12 @@ th {
 
     .checkout-page .discount-offer {
         margin: 0.55rem 0 0.7rem;
-        padding: 0.55rem;
-        font-size: 0.78rem;
-        line-height: 1.35;
     }
 
-    .checkout-page .discount-offer ul {
-        grid-template-columns: 1fr;
-        gap: 0.3rem;
-        margin-top: 0.25rem;
-    }
-
-    .checkout-page .discount-offer li {
-        min-height: 40px;
-        padding: 0.45rem;
+    .checkout-page .discount-offer-track {
+        padding: 0.5rem 0;
         font-size: 0.76rem;
+        line-height: 1.35;
     }
 
     .checkout-page .btn {
