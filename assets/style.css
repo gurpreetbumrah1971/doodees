@@ -3255,6 +3255,16 @@ th {
     background: var(--surface);
 }
 
+.checkout-page .form-card select[data-payment-method] {
+    background: #fff;
+    color: #141414;
+}
+
+.checkout-page .form-card select[data-payment-method].is-chosen {
+    background: var(--primary);
+    color: #fff;
+}
+
 .checkout-page .form-card .btn.primary {
     min-height: 46px;
     border-color: var(--primary);

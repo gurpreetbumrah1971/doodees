@@ -2227,6 +2227,7 @@ function syncPaymentBox() {
   const paymentMethod = document.querySelector('[data-payment-method]');
   const method = paymentMethod ? paymentMethod.value : 'UPI';
   if (box) box.hidden = method !== 'UPI';
+  if (paymentMethod) paymentMethod.classList.add('is-chosen');
 }
 
 const paymentMethodSelect = document.querySelector('[data-payment-method]');
