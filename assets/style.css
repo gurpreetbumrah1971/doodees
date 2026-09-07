@@ -873,7 +873,7 @@ textarea {
 }
 
 .student-discount-toggle input {
-    accent-color: var(--green);
+    accent-color: var(--accent);
     height: 1.05rem;
     margin: 0;
     width: 1.05rem;
