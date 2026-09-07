@@ -463,6 +463,10 @@ textarea {
     background: var(--surface);
 }
 
+select:focus {
+    outline-color: var(--primary);
+}
+
 .chips,
 .category-tabs,
 .menu-tabs {
