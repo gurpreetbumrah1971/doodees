@@ -648,7 +648,7 @@ function renderCashbackPanel(preCashbackTotal = 0, applied = 0) {
       <form class="cashback-login-form" data-cashback-login-form>
         <label>Mobile Number<input name="mobile_number" data-wallet-number required inputmode="tel" placeholder="10-digit mobile number" value="${escapeHtml(syncedNumber)}"></label>
         ${mode === 'new' ? `<label>Your Name<input name="customer_name" required autocomplete="name" placeholder="Enter your name" value="${escapeHtml((localStorage.getItem(CASHBACK_NAME_KEY) || '').trim())}"></label>` : ''}
-        <button class="btn secondary full" type="submit">Send OTP</button>
+        <button class="btn primary full" type="submit">Send OTP</button>
       </form>
       ${pendingOtp ? `
         <form class="cashback-login-form" data-cashback-verify-form>
