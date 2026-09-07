@@ -1311,8 +1311,8 @@ select:focus {
 .cashback-test-otp {
     padding: 0.65rem 0.75rem;
     border-radius: 8px;
-    background: rgba(255, 145, 0, 0.15);
-    color: var(--accent);
+    background: var(--surface);
+    color: var(--text);
 }
 
 .cashback-transactions {
