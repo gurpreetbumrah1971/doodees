@@ -1224,7 +1224,7 @@ select:focus {
 .radio-custom {
     width: 20px;
     height: 20px;
-    border: 2px solid var(--line);
+    border: 2px solid var(--muted);
     border-radius: 50%;
     position: relative;
     flex-shrink: 0;
