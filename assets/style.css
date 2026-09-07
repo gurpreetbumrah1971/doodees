@@ -463,6 +463,12 @@ textarea {
     background: var(--surface);
 }
 
+input::placeholder,
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.55);
+    opacity: 1;
+}
+
 select:focus {
     outline-color: var(--primary);
 }
@@ -505,6 +511,10 @@ select:focus {
 
 .custom-select.is-open .custom-select-trigger {
     border-color: var(--primary);
+}
+
+.custom-select-trigger:focus {
+    outline-color: var(--primary);
 }
 
 .custom-select-list {
