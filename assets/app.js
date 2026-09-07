@@ -2208,6 +2208,35 @@ function applyMenuFilters() {
     const matchesVeg = vegMode === 'all' || item.dataset.veg === vegMode;
     item.hidden = !matchesSearch || !matchesVeg;
   });
+
+  // Hide category tabs (and accordion sections) left with no matching items
+  document.querySelectorAll('[data-menu-tabs]').forEach((tabGroup) => {
+    let activeTabIsEmpty = false;
+    let firstVisibleTab = null;
+    tabGroup.querySelectorAll('[data-menu-tab]').forEach((tab) => {
+      const panel = tabGroup.querySelector(`[data-menu-panel="${tab.dataset.menuTab}"]`);
+      const hasVisibleItem = panel ? [...panel.querySelectorAll('[data-menu-item]')].some((item) => !item.hidden) : false;
+      tab.hidden = !hasVisibleItem;
+      if (hasVisibleItem && !firstVisibleTab) firstVisibleTab = tab;
+      if (!hasVisibleItem && tab.classList.contains('active')) activeTabIsEmpty = true;
+    });
+    if (activeTabIsEmpty && firstVisibleTab) {
+      tabGroup.querySelectorAll('[data-menu-tab]').forEach((tab) => {
+        const isActive = tab === firstVisibleTab;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+      tabGroup.querySelectorAll('[data-menu-panel]').forEach((panel) => {
+        panel.hidden = panel.dataset.menuPanel !== firstVisibleTab.dataset.menuTab;
+      });
+    }
+  });
+
+  document.querySelectorAll('.menu-accordion-layout .menu-accordion').forEach((details) => {
+    const hasVisibleItem = [...details.querySelectorAll('[data-menu-item]')].some((item) => !item.hidden);
+    details.hidden = !hasVisibleItem;
+  });
+
   renderMenuSearchResults(query, vegMode);
 }
 
