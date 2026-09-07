@@ -2540,7 +2540,7 @@ function showStaticOrderThankYou({ order, total, amount, paymentMethod, whatsapp
         <h2>Items in this order</h2>
         <div class="order-items-list" data-order-items-list><p class="cashback-empty">Loading order items...</p></div>
       </div>
-      <a class="btn secondary full" data-add-more-food hidden href="${pageUrl('menu.html')}">Add More Food to This Order</a>
+      <a class="btn primary full" data-add-more-food hidden href="${pageUrl('menu.html')}">Add More Food to This Order</a>
       <a class="btn secondary" href="${pageUrl('menu.html')}">Back to Menu</a>
     </div>
   `;
