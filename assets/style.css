@@ -3257,12 +3257,7 @@ th {
 
 .checkout-page .form-card select[data-payment-method] {
     background: #fff;
-    color: #141414;
-}
-
-.checkout-page .form-card select[data-payment-method].is-chosen {
-    background: var(--primary);
-    color: #fff;
+    color: #000;
 }
 
 .checkout-page .form-card .btn.primary {
