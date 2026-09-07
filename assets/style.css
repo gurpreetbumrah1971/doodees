@@ -880,7 +880,7 @@ textarea {
 }
 
 .student-discount-field .student-discount-toggle em {
-    color: var(--green);
+    color: var(--accent);
     font-size: 0.85rem;
     font-style: normal;
     margin-left: auto;
