@@ -3140,9 +3140,13 @@ function initDeliveryFields() {
   localitySelect.addEventListener('change', updateVisibility);
 }
 
+let customSelectIdCounter = 0;
+
 function enhanceSelect(select) {
   if (!select || select.dataset.enhanced) return;
   select.dataset.enhanced = '1';
+
+  const uid = 'custom-select-' + (customSelectIdCounter += 1);
 
   const wrapper = document.createElement('div');
   wrapper.className = 'custom-select';
@@ -3152,6 +3156,10 @@ function enhanceSelect(select) {
   const trigger = document.createElement('button');
   trigger.type = 'button';
   trigger.className = 'custom-select-trigger';
+  trigger.setAttribute('role', 'combobox');
+  trigger.setAttribute('aria-haspopup', 'listbox');
+  trigger.setAttribute('aria-expanded', 'false');
+  trigger.setAttribute('aria-controls', uid + '-list');
   if (select.id) {
     trigger.id = select.id;
     select.removeAttribute('id');
@@ -3165,8 +3173,13 @@ function enhanceSelect(select) {
 
   const list = document.createElement('ul');
   list.className = 'custom-select-list';
+  list.id = uid + '-list';
+  list.setAttribute('role', 'listbox');
   list.hidden = true;
   wrapper.appendChild(list);
+
+  let optionEls = [];
+  let highlightedIndex = -1;
 
   function syncTrigger() {
     const selectedOption = select.options[select.selectedIndex];
@@ -3176,32 +3189,106 @@ function enhanceSelect(select) {
   function closeList() {
     list.hidden = true;
     wrapper.classList.remove('is-open');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.removeAttribute('aria-activedescendant');
+    highlightedIndex = -1;
+  }
+
+  function highlight(index) {
+    if (!optionEls.length) return;
+    highlightedIndex = Math.max(0, Math.min(index, optionEls.length - 1));
+    optionEls.forEach((el, i) => el.classList.toggle('is-highlighted', i === highlightedIndex));
+    trigger.setAttribute('aria-activedescendant', optionEls[highlightedIndex].id);
+    optionEls[highlightedIndex].scrollIntoView({ block: 'nearest' });
+  }
+
+  function selectIndex(index) {
+    const opt = select.options[index];
+    if (!opt) return;
+    select.value = opt.value;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    syncTrigger();
   }
 
   function renderList() {
     list.innerHTML = '';
-    Array.from(select.options).forEach((opt) => {
+    optionEls = Array.from(select.options).map((opt, index) => {
       const li = document.createElement('li');
       li.className = 'custom-select-option';
+      li.id = uid + '-option-' + index;
+      li.setAttribute('role', 'option');
       li.textContent = opt.textContent;
-      if (opt.value === select.value) li.classList.add('is-selected');
+      const isSelected = opt.value === select.value;
+      li.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+      if (isSelected) li.classList.add('is-selected');
       li.addEventListener('click', () => {
-        select.value = opt.value;
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-        syncTrigger();
+        selectIndex(index);
         closeList();
+        trigger.focus();
       });
+      li.addEventListener('mouseenter', () => highlight(index));
       list.appendChild(li);
+      return li;
     });
   }
 
+  function openList() {
+    renderList();
+    list.hidden = false;
+    wrapper.classList.add('is-open');
+    trigger.setAttribute('aria-expanded', 'true');
+    highlight(select.selectedIndex >= 0 ? select.selectedIndex : 0);
+  }
+
   trigger.addEventListener('click', () => {
-    if (list.hidden) {
-      renderList();
-      list.hidden = false;
-      wrapper.classList.add('is-open');
-    } else {
-      closeList();
+    if (list.hidden) openList();
+    else closeList();
+  });
+
+  trigger.addEventListener('keydown', (event) => {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (list.hidden) openList();
+        else highlight(highlightedIndex + 1);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        if (list.hidden) openList();
+        else highlight(highlightedIndex - 1);
+        break;
+      case 'Home':
+        if (!list.hidden) {
+          event.preventDefault();
+          highlight(0);
+        }
+        break;
+      case 'End':
+        if (!list.hidden) {
+          event.preventDefault();
+          highlight(optionEls.length - 1);
+        }
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (list.hidden) openList();
+        else {
+          selectIndex(highlightedIndex);
+          closeList();
+        }
+        break;
+      case 'Escape':
+        if (!list.hidden) {
+          event.preventDefault();
+          closeList();
+        }
+        break;
+      case 'Tab':
+        closeList();
+        break;
+      default:
+        break;
     }
   });
 
