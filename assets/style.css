@@ -3248,7 +3248,8 @@ th {
 
 .checkout-page .referral-input-row input {
     border-color: var(--line);
-    background: var(--surface);
+    background: #fff;
+    color: #333;
 }
 
 .checkout-page .checkout-summary a.btn.secondary {
