@@ -3147,7 +3147,6 @@ function enhanceSelect(select) {
   const wrapper = document.createElement('div');
   wrapper.className = 'custom-select';
   select.parentNode.insertBefore(wrapper, select);
-  wrapper.appendChild(select);
   select.classList.add('custom-select-native');
 
   const trigger = document.createElement('button');
@@ -3157,7 +3156,12 @@ function enhanceSelect(select) {
     trigger.id = select.id;
     select.removeAttribute('id');
   }
+  // Trigger must precede the native select in DOM order: when a <label>
+  // implicitly wraps a control (no for/id, e.g. Payment Method), the
+  // browser activates the first labelable descendant on label click - it
+  // must be this visible button, not the now-hidden select.
   wrapper.appendChild(trigger);
+  wrapper.appendChild(select);
 
   const list = document.createElement('ul');
   list.className = 'custom-select-list';
@@ -3191,8 +3195,7 @@ function enhanceSelect(select) {
     });
   }
 
-  trigger.addEventListener('click', (event) => {
-    event.stopPropagation();
+  trigger.addEventListener('click', () => {
     if (list.hidden) {
       renderList();
       list.hidden = false;
