@@ -2890,7 +2890,7 @@ th {
     margin: 0;
     padding: 0.9rem 1rem;
     border-bottom: 1px solid var(--line);
-    background: transparent;
+    background: var(--soft);
 }
 
 .menu-search-results {
