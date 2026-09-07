@@ -1041,10 +1041,10 @@ textarea {
     padding: 0.65rem 0.75rem;
     border: 1px solid var(--line);
     border-radius: 8px;
-    background: var(--surface);
+    background: #fff;
     font-size: 1rem;
     font-family: inherit;
-    color: inherit;
+    color: #333;
     resize: vertical;
 }
 
@@ -1512,6 +1512,11 @@ textarea {
 .delivery-address-field textarea,
 .delivery-address-field input:not([type="checkbox"]) {
     width: 100%;
+}
+
+.delivery-address-field select#address-label {
+    background: #fff;
+    color: #333;
 }
 
 .delivery-address-field label.save-address-option {
