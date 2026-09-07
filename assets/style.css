@@ -1601,6 +1601,7 @@ select:focus {
     min-height: 38px;
     padding: 7px 8px;
     font-size: 0.9rem;
+    color: #fff;
 }
 
 .inline-options {
@@ -1802,7 +1803,7 @@ select:focus {
 }
 
 .cashback-earned-card strong {
-    color: var(--green);
+    color: var(--accent);
     font-size: 1.7rem;
 }
 
