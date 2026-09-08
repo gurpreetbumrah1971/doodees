@@ -840,13 +840,13 @@ select:focus {
     border: 0;
     border-radius: 50%;
     background: transparent;
-    color: var(--primary-light);
+    color: var(--accent);
     cursor: pointer;
 }
 
 .checkout-item .icon-remove:hover,
 .checkout-item .icon-remove:focus-visible {
-    background: rgba(183, 0, 0, 0.15);
+    background: rgba(255, 145, 0, 0.15);
 }
 
 .checkout-item .icon-remove svg {
