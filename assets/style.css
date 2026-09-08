@@ -823,6 +823,7 @@ select:focus {
 
 .checkout-qty-control button {
     min-height: 28px;
+    color: var(--accent);
 }
 
 .checkout-line-price {
