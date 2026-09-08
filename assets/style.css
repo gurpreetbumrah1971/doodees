@@ -1792,9 +1792,9 @@ select:focus {
     max-width: 460px;
     width: min(100%, 460px);
     padding: 1rem;
-    border: 1px solid rgba(52, 199, 89, 0.4);
+    border: 1px solid var(--line);
     border-radius: 8px;
-    background: rgba(52, 199, 89, 0.1);
+    background: var(--surface);
 }
 
 .cashback-earned-card span {

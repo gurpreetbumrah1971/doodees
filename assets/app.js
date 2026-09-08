@@ -2264,6 +2264,8 @@ function syncPaymentBox() {
 const paymentMethodSelect = document.querySelector('[data-payment-method]');
 if (paymentMethodSelect) paymentMethodSelect.addEventListener('change', syncPaymentBox);
 
+let customSelectIdCounter = 0;
+
 function syncDateGroup(group) {
   const daySelect = group.querySelector('[data-date-day]');
   const monthSelect = group.querySelector('[data-date-month]');
@@ -2280,6 +2282,9 @@ function syncDateGroup(group) {
 }
 
 function bindDateGroup(group) {
+  enhanceSelect(group.querySelector('[data-date-day]'));
+  enhanceSelect(group.querySelector('[data-date-month]'));
+  enhanceSelect(group.querySelector('[data-date-year]'));
   group.addEventListener('change', () => syncDateGroup(group));
   syncDateGroup(group);
 }
@@ -3168,8 +3173,6 @@ function initDeliveryFields() {
 
   localitySelect.addEventListener('change', updateVisibility);
 }
-
-let customSelectIdCounter = 0;
 
 function enhanceSelect(select) {
   if (!select || select.dataset.enhanced) return;
