@@ -169,8 +169,7 @@ const projectAssetUrl = (url) => {
     : url;
 };
 const DISCOUNT_TIERS = {
-  500: 0.10,
-  1000: 0.15,
+  1000: 0.10,
 };
 const FRONTEND_CATEGORY_ORDER = ['Burgers', 'Chicken Wings', 'Desserts', 'Pies & Tarts', 'Puff Pastry Pies', 'Egg Dishes', 'Beverages'];
 const FRONTEND_CATEGORY_INDEX = new Map(FRONTEND_CATEGORY_ORDER.map((name, index) => [name, index]));
