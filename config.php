@@ -36,6 +36,18 @@ define('DB_NAME', $localDatabase ? 'spice_restaurant' : configValue('DB_NAME'));
 define('DB_USER', isset($localDatabase['user']) ? rawurldecode($localDatabase['user']) : configValue('DB_USER'));
 define('DB_PASS', isset($localDatabase['pass']) ? rawurldecode($localDatabase['pass']) : configValue('DB_PASS'));
 define('APP_SECRET', $localDatabase ? 'local-dev-only-secret-do-not-use-in-production' : configValue('APP_SECRET'));
+// Shared cashback wallet database, also used by manishas-kitchen.food, so a
+// customer's cashback balance is the same number and redeemable on either
+// site. Both sites connect with the same dedicated wallet-DB user (set via
+// config.local.php in production) rather than each site's own DB_USER, since
+// Hostinger's panel only allows one user per database. For local XAMPP,
+// create a local `combowallet` database (see wallet-centralization-schema.sql
+// in the manishas-kitchen-hostinger repo) using the same local credentials
+// as the main DB.
+define('WALLET_DB_HOST', configValue('WALLET_DB_HOST') ?: DB_HOST);
+define('WALLET_DB_NAME', $localDatabase ? 'combowallet' : (configValue('WALLET_DB_NAME') ?: 'u515749657_combowallet'));
+define('WALLET_DB_USER', $localDatabase ? DB_USER : (configValue('WALLET_DB_USER') ?: 'u515749657_Cashback'));
+define('WALLET_DB_PASS', $localDatabase ? DB_PASS : configValue('WALLET_DB_PASS'));
 if (DB_NAME === '' || DB_USER === '' || APP_SECRET === '') {
   http_response_code(500);
   die('Server is not configured: set DB_HOST, DB_NAME, DB_USER, DB_PASS and APP_SECRET in config.local.php (see config.local.example.php) or as environment variables.');
@@ -104,6 +116,16 @@ function db(): PDO {
     // Force IST regardless of the host's MySQL server timezone, so
     // createdAt/NOW()/CURRENT_TIMESTAMP values match what the frontend
     // (assets/app.js) assumes when it renders timestamps as IST.
+    $pdo->exec("SET time_zone='+05:30'");
+  }
+  return $pdo;
+}
+
+function walletDb(): PDO {
+  static $pdo = null;
+  if ($pdo === null) {
+    $pdo = new PDO('mysql:host='.WALLET_DB_HOST.';dbname='.WALLET_DB_NAME.';charset=utf8mb4', WALLET_DB_USER, WALLET_DB_PASS,
+      [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
     $pdo->exec("SET time_zone='+05:30'");
   }
   return $pdo;
