@@ -122,11 +122,12 @@ function createOrderFromRequest(array $b): never {
     // Cashback is earned on the bill amount only (items minus discount), never on GST or delivery.
     $earned=money(max(0,money($subtotal-$discount)-$redeemed)*$cashbackRate);
     $number='ORD-'.round(microtime(true)*1000); $session=bin2hex(random_bytes(24));
-    stmt('INSERT INTO `order`(orderNumber,customerId,customerName,mobileNumber,whatsappNumber,email,address,tableNumber,orderType,paymentMethod,totalAmount,gstAmount,discountAmount,referralCode,referrerId,referralDiscount,cashbackRedeemed,cashbackEarned,grandTotal,customerSessionToken,customerSessionExpiresAt) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,DATE_ADD(NOW(),INTERVAL 30 MINUTE))',[$number,$customer['id'],$b['customerName']??'Guest',$customer['mobileNumber'],$b['whatsappNumber']??null,$b['email']??null,$b['address']??null,$b['tableNumber']??null,in_array($b['orderType']??'', ['DINE_IN','TAKEAWAY','DELIVERY'])?$b['orderType']:'DINE_IN',in_array($b['paymentMethod']??'', ['CASH','UPI','CARD'])?$b['paymentMethod']:'UPI',$subtotal,money($b['gstAmount']??0),$discount,$referralCode?:null,$referrer['id']??null,$referralDiscount,$redeemed,$earned,$grand,$session]);
+    $instructions=trim((string)($b['instructions']??'')); $instructions=$instructions!==''?substr($instructions,0,500):null;
+    stmt('INSERT INTO `order`(orderNumber,customerId,customerName,mobileNumber,whatsappNumber,email,address,instructions,tableNumber,orderType,paymentMethod,totalAmount,gstAmount,discountAmount,referralCode,referrerId,referralDiscount,cashbackRedeemed,cashbackEarned,grandTotal,customerSessionToken,customerSessionExpiresAt) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,DATE_ADD(NOW(),INTERVAL 30 MINUTE))',[$number,$customer['id'],$b['customerName']??'Guest',$customer['mobileNumber'],$b['whatsappNumber']??null,$b['email']??null,$b['address']??null,$instructions,$b['tableNumber']??null,in_array($b['orderType']??'', ['DINE_IN','TAKEAWAY','DELIVERY'])?$b['orderType']:'DINE_IN',in_array($b['paymentMethod']??'', ['CASH','UPI','CARD'])?$b['paymentMethod']:'UPI',$subtotal,money($b['gstAmount']??0),$discount,$referralCode?:null,$referrer['id']??null,$referralDiscount,$redeemed,$earned,$grand,$session]);
     $orderId=(int)$pdo->lastInsertId(); foreach($items as $item) stmt('INSERT INTO orderitem(orderId,foodItemId,quantity,unitPrice,subtotal) VALUES(?,?,?,?,?)',[$orderId,$item['food']['id'],$item['quantity'],$item['price'],$item['subtotal']]);
     $balance=(float)$customer['cashbackBalance']; if($redeemed>0){$balance=money($balance-$redeemed);stmt('INSERT INTO cashbacktransaction(customerId,orderId,type,amount,balanceAfter,note) VALUES(?,?,?,?,?,?)',[$customer['id'],$orderId,'REDEEMED',$redeemed,$balance,'Redeemed on order '.$number]); stmt('UPDATE customer SET cashbackBalance=? WHERE id=?',[$balance,$customer['id']]);}
     $pdo->commit();
-    sendOrderNotificationEmail($number,(string)($b['customerName']??''),(string)$customer['mobileNumber'],(string)($b['orderType']??'DINE_IN'),(string)($b['paymentMethod']??'UPI'),$b['tableNumber']??null,$b['address']??null,$items,$subtotal,money($b['gstAmount']??0),$discount,$grand);
+    sendOrderNotificationEmail($number,(string)($b['customerName']??''),(string)$customer['mobileNumber'],(string)($b['orderType']??'DINE_IN'),(string)($b['paymentMethod']??'UPI'),$b['tableNumber']??null,$b['address']??null,$instructions,$items,$subtotal,money($b['gstAmount']??0),$discount,$grand);
     sendOrderNotificationWhatsapp($number);
     out(['id'=>$orderId,'orderNumber'=>$number,'grandTotal'=>$grand,'cashbackRedeemed'=>$redeemed,'cashbackEarned'=>$earned,'customerReferralCode'=>$customer['referralCode'],'referralApplied'=>(bool)$referrer,'customerSessionToken'=>$session,'customerSessionExpiresAt'=>date(DATE_ATOM,time()+1800)],201);
   } catch (Throwable $error) { if($pdo->inTransaction())$pdo->rollBack(); throw $error; }
@@ -135,7 +136,7 @@ function orderNotificationRecipients(): array {
   $configured=array_filter(array_map('trim',explode(',',ORDER_NOTIFICATION_RECIPIENTS)));
   return $configured ?: ['gurpreet.bumrah@gmail.com','manishaskitchen2026@gmail.com','aryanchavan131@gmail.com'];
 }
-function sendOrderNotificationEmail(string $orderNumber,string $customerName,string $mobileNumber,string $orderType,string $paymentMethod,?string $tableNumber,?string $address,array $items,float $subtotal,float $gst,float $discount,float $grand): void {
+function sendOrderNotificationEmail(string $orderNumber,string $customerName,string $mobileNumber,string $orderType,string $paymentMethod,?string $tableNumber,?string $address,?string $instructions,array $items,float $subtotal,float $gst,float $discount,float $grand): void {
   if (RESEND_API_KEY==='' || RESEND_FROM_EMAIL==='') return;
   $money=fn($n)=>'Rs. '.number_format((float)$n,2);
   $lines=[]; $i=1; foreach ($items as $item) { $lines[]=$i.'. '.$item['food']['name'].' x '.$item['quantity'].' - '.$money($item['subtotal']); $i++; }
@@ -147,6 +148,7 @@ function sendOrderNotificationEmail(string $orderNumber,string $customerName,str
     'Mobile: '.($mobileNumber ?: 'Not provided'),
     'Order type: '.str_replace('_',' ',$orderType),
     'Payment: '.$paymentMethod.($tableNumber?"\nTable: $tableNumber":'').($address?"\nAddress: $address":''),
+    $instructions?"Special instructions: $instructions":'',
     '','Items:',$lines?implode("\n",$lines):'No items listed','',
     'Food subtotal: '.$money($subtotal),
     'GST: '.$money($gst),

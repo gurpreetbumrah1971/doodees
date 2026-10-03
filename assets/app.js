@@ -2749,11 +2749,13 @@ if (checkoutForm) checkoutForm.addEventListener('submit', async (event) => {
       }
       return;
     }
+    const instructions = String((document.querySelector('[name="special_instructions"]') || {}).value || '').trim() || null;
     const orderPayload = {
       customerName,
       mobileNumber: number,
       whatsappNumber: number,
       address: deliveryAddress,
+      instructions,
       studentInstitution: studentDiscountDetails().eligible ? studentDiscountDetails().institution : null,
       studentGrade: studentDiscountDetails().eligible ? studentDiscountDetails().grade : null,
       referralCode: appliedReferralCode() || null,

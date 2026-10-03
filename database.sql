@@ -181,6 +181,7 @@ CREATE TABLE `order` (
   `whatsappNumber` varchar(191) DEFAULT NULL,
   `email` varchar(191) DEFAULT NULL,
   `address` text DEFAULT NULL,
+  `instructions` text DEFAULT NULL,
   `tableNumber` varchar(191) DEFAULT NULL,
   `orderType` enum('DINE_IN','TAKEAWAY','DELIVERY') NOT NULL,
   `paymentMethod` enum('CASH','UPI','CARD') NOT NULL,
