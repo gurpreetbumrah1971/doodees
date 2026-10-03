@@ -98,12 +98,13 @@
                     </div>
                     <p data-student-discount-note hidden>Enter both details to apply your student discount in addition to eligible order discounts.</p>
                 </div>
-                <p class="delivery-note">Delivery charges apply for Kopar Khairane. For areas outside Kopar Khairane, please connect with us for delivery charges.</p>
                 <div class="total-row grand">
                     <span>Grand Total</span>
                     <strong data-checkout-total>Rs. 0.00</strong>
                 </div>
-                
+
+                <label for="special-instructions">Any special instructions? (optional)</label>
+                <textarea id="special-instructions" name="special_instructions" rows="2" maxlength="500" placeholder="E.g. less spicy, no onions, ring the bell twice"></textarea>
                 <div class="delivery-type-field">
                     <fieldset>
                         <legend>Order Type</legend>
@@ -187,8 +188,6 @@
                         <span aria-hidden="true">Discount offer &mdash; Flat 10% off on orders above Rs. 1000 &bull;</span>
                     </div>
                 </div>
-                <label for="special-instructions">Any special instructions? (optional)</label>
-                <textarea id="special-instructions" name="special_instructions" rows="2" maxlength="500" placeholder="E.g. less spicy, no onions, ring the bell twice"></textarea>
                 <a class="btn primary full" href="menu.html">Add More Items</a>
             </section>
             <form class="card form-card" method="post" data-checkout-form data-static-checkout>
